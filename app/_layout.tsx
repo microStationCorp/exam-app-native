@@ -29,10 +29,6 @@ const MainLayout = () => {
     }
   }, [isAuthenticated]);
 
-  const handleLogout = async () => {
-    await logout();
-  };
-
   return (
     <SafeAreaProvider>
       <Stack
@@ -63,9 +59,7 @@ const MainLayout = () => {
         <Stack.Screen
           name="(profile)"
           options={{
-            headerShown: true,
-            headerTitle: user?.name,
-            headerRight: () => <LogoutButton handleAction={handleLogout} />,
+            headerShown: false,
           }}
         />
       </Stack>
@@ -104,21 +98,6 @@ const GoAuth = () => {
       onPress={() => router.navigate("(auth)/")}
     >
       <Text>Auth</Text>
-    </TouchableOpacity>
-  );
-};
-
-const LogoutButton = ({
-  handleAction,
-}: {
-  handleAction: () => Promise<void>;
-}) => {
-  return (
-    <TouchableOpacity
-      className="bg-slate-300 px-4 py-2 rounded-md"
-      onPress={handleAction}
-    >
-      <Text>Logout</Text>
     </TouchableOpacity>
   );
 };
