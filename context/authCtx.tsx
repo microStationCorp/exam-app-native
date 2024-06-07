@@ -14,25 +14,20 @@ import {
 } from "firebase/auth";
 import { auth, db } from "@/lib/firebase/firebaseConfig";
 import { doc, setDoc, getDoc } from "firebase/firestore";
-import { Alert } from "react-native";
 
 export const AuthContext = createContext<{
   user: (FirebaseUser & { name: string }) | null;
   isAuthenticated: boolean | undefined;
-  logout: () => void;
+  logout: () => Promise<AuthActionResponseT> | null;
   signIn: (
     email: string,
     password: string
-  ) => Promise<
-    { success: boolean; data: {} } | { success: boolean; data: null }
-  > | null;
+  ) => Promise<AuthActionResponseT> | null;
   signUp: (
     username: string,
     email: string,
     password: string
-  ) => Promise<
-    { success: boolean; data: {} } | { success: boolean; data: null }
-  > | null;
+  ) => Promise<AuthActionResponseT> | null;
 }>({
   user: null,
   isAuthenticated: undefined,
@@ -41,6 +36,51 @@ export const AuthContext = createContext<{
   signUp: (username: string, email: string, password: string) => null,
 });
 
+//logout
+const logout = async () => {
+  try {
+    await signOut(auth);
+    return { success: true };
+  } catch (e) {
+    return { success: false, msg: (e as Error).message };
+  }
+};
+
+//signup
+const signUp = async (
+  username: string,
+  email: string,
+  password: string
+): Promise<AuthActionResponseT> => {
+  try {
+    const res = await createUserWithEmailAndPassword(auth, email, password);
+
+    await setDoc(doc(db, "users", res.user.uid), {
+      username,
+      userId: res.user.uid,
+    });
+
+    return { success: true, data: res.user };
+  } catch (e) {
+    return { success: false, msg: (e as Error).message };
+  }
+};
+
+//signin
+const signIn = async (
+  email: string,
+  password: string
+): Promise<AuthActionResponseT> => {
+  try {
+    const res = await signInWithEmailAndPassword(auth, email, password);
+    return { success: true, data: res.user };
+  } catch (e) {
+    console.log(e);
+    return { success: false, msg: (e as Error).message };
+  }
+};
+
+//auth provider
 export const AuthContextProvider = ({ children }: PropsWithChildren) => {
   const [user, setUser] = useState<(FirebaseUser & { name: string }) | null>(
     null
@@ -70,54 +110,6 @@ export const AuthContextProvider = ({ children }: PropsWithChildren) => {
     return data.data()?.username;
   };
 
-  //signin
-  const signIn = async (email: string, password: string) => {
-    try {
-      const res = await signInWithEmailAndPassword(auth, email, password);
-      return { success: true, data: res.user };
-    } catch (e) {
-      console.log(e);
-      return { success: false, data: null };
-    }
-  };
-
-  //signup
-  const signUp = async (username: string, email: string, password: string) => {
-    try {
-      const res = await createUserWithEmailAndPassword(auth, email, password);
-
-      await setDoc(doc(db, "users", res.user.uid), {
-        username,
-        userId: res.user.uid,
-      });
-
-      return { success: true, data: res.user };
-    } catch (e) {
-      return { success: false, data: null, msg: e };
-    }
-  };
-
-  //logout
-  const logout = async () => {
-    try {
-      Alert.alert(`Hi, ${user?.name}`, "Want to Log out ?", [
-        {
-          text: "Cancel",
-          onPress: () => console.log("canceled"),
-        },
-        {
-          text: "Ok",
-          onPress: async () => {
-            await signOut(auth);
-            return { success: true };
-          },
-        },
-      ]);
-    } catch (e) {
-      return { success: false };
-    }
-  };
-
   return (
     <AuthContext.Provider
       value={{ user, isAuthenticated, signIn, signUp, logout }}
@@ -130,3 +122,14 @@ export const AuthContextProvider = ({ children }: PropsWithChildren) => {
 export function useAuth() {
   return useContext(AuthContext);
 }
+
+export type AuthActionResponseT =
+  | {
+      success: true;
+      data?: {};
+    }
+  | {
+      success: false;
+      msg?: {} | string;
+    }
+  | null;

@@ -1,14 +1,13 @@
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Drawer } from "expo-router/drawer";
-import { Text, TouchableOpacity } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
-import CustomDrawerContent from "@/components/customDrawerContent";
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
+import CustomDrawerContent from "@/components/customDrawerContent";
 
 export default function ProfileLayout() {
   return (
     <GestureHandlerRootView>
-      <Drawer drawerContent={CustomDrawerContent} screenOptions={{}}>
+      <Drawer drawerContent={CustomDrawerContent}>
         <Drawer.Screen
           name="index"
           options={{
@@ -43,18 +42,3 @@ export default function ProfileLayout() {
     </GestureHandlerRootView>
   );
 }
-
-export const LogoutButton = ({
-  handleAction,
-}: {
-  handleAction: () => Promise<void>;
-}) => {
-  return (
-    <TouchableOpacity
-      className="bg-slate-300 px-4 py-2 rounded-md"
-      onPress={handleAction}
-    >
-      <Text>Logout</Text>
-    </TouchableOpacity>
-  );
-};

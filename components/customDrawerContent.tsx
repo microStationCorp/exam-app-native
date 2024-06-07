@@ -1,29 +1,45 @@
-import { Image, Text, View } from "react-native";
+import { Alert, Image, Text, TouchableOpacity, View } from "react-native";
 import React from "react";
 import {
   DrawerContentScrollView,
   DrawerItemList,
 } from "@react-navigation/drawer";
+import { SafeAreaView } from "react-native-safe-area-context";
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
+import { useAuth } from "@/context/authCtx";
+import { LogoutButton } from "./logoutButton";
 
 const CustomDrawerContent = (props: any) => {
   return (
-    <View style={{ flex: 1 }}>
-      {/* <View>
+    <SafeAreaView style={{ flex: 1 }}>
+      <View
+        style={{
+          width: "100%",
+          justifyContent: "center",
+          height: hp(22),
+          alignItems: "center",
+        }}
+      >
         <Image
-          source={{ uri: "/assets/images/drawer_master.jpg" }}
-          style={{ width: 100, height: 100, alignSelf: "center" }}
+          source={require("@/assets/images/drawer_master.png")}
+          style={{ height: hp(18), width: wp(30) }}
         />
-      </View> */}
+        <Text className="text-2xl">Exam-App</Text>
+        <Text className="text-xs">version : 1.0.0</Text>
+      </View>
       <DrawerContentScrollView {...props} scrollEnabled={false}>
         <DrawerItemList {...props} />
       </DrawerContentScrollView>
-      <View className="items-center bg-slate-100">
-        <Text className="text-xl">Exam-App</Text>
-        <Text>Version:1.0.0</Text>
-        <Text>Sujan Mondal</Text>
+      <View className="items-center mb-2">
+        <LogoutButton />
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 
 export default CustomDrawerContent;
+
+
