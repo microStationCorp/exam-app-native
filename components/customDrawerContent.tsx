@@ -9,8 +9,6 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
-import { useAuth } from "@/context/authCtx";
-import { LogoutButton } from "./logoutButton";
 
 const CustomDrawerContent = (props: any) => {
   return (
@@ -34,7 +32,7 @@ const CustomDrawerContent = (props: any) => {
         <DrawerItemList {...props} />
       </DrawerContentScrollView>
       <View className="items-center mb-2">
-        <LogoutButton />
+        {/* logout button clerk */}
       </View>
     </SafeAreaView>
   );

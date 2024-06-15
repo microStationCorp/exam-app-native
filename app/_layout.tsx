@@ -1,33 +1,38 @@
 import { useFonts } from "expo-font";
-import { router, Slot, Stack, useRouter, useSegments } from "expo-router";
+import { Stack, useRouter, useSegments } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import "react-native-reanimated";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import Constants from "expo-constants";
 
 import "../global.css";
-import { Text, TouchableOpacity } from "react-native";
-import { AuthContextProvider, useAuth } from "@/context/authCtx";
+import { HomeButton } from "@/components/homeButton";
+import { ClerkProvider, useAuth } from "@clerk/clerk-expo";
+import { GoAuth } from "@/components/goAuthButton";
+import { tokenCache } from "@/lib/tokenCache";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
 //main layout
 const MainLayout = () => {
-  const { isAuthenticated, logout, user } = useAuth();
+  const { isLoaded, isSignedIn } = useAuth();
   const segments = useSegments();
   const router = useRouter();
 
   useEffect(() => {
-    //check if the user is authnticated
-    const isProfile = segments[0] == "(profile)";
-    if (isAuthenticated && !isProfile) {
-      //redirect to /profile
-      router.replace("(profile)/");
-    } else if (isAuthenticated == false) {
+    const inAuthPage = segments[0] == "(profile)";
+    if (isSignedIn == false && inAuthPage) {
       router.replace("/");
+    } else if (isSignedIn) {
+      router.replace("(profile)/");
     }
-  }, [isAuthenticated]);
+  }, [isSignedIn]);
+
+  if (!isLoaded) {
+    return null;
+  }
 
   return (
     <SafeAreaProvider>
@@ -51,9 +56,10 @@ const MainLayout = () => {
           }}
         />
         <Stack.Screen
-          name="(auth)"
+          name="(auth)/index"
           options={{
-            headerShown: false,
+            headerTitle: "Sign in",
+            headerRight: () => <HomeButton />,
           }}
         />
         <Stack.Screen
@@ -84,20 +90,11 @@ export default function RootLayout() {
   }
 
   return (
-    <AuthContextProvider>
+    <ClerkProvider
+      publishableKey={Constants.expoConfig?.extra!.clerkPublishableKey}
+      tokenCache={tokenCache}
+    >
       <MainLayout />
-    </AuthContextProvider>
+    </ClerkProvider>
   );
 }
-
-// go auth button
-const GoAuth = () => {
-  return (
-    <TouchableOpacity
-      className="bg-slate-300 px-4 py-2 rounded-md"
-      onPress={() => router.navigate("(auth)/")}
-    >
-      <Text>Auth</Text>
-    </TouchableOpacity>
-  );
-};

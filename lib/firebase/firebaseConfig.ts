@@ -27,4 +27,6 @@ export const db = getFirestore(app);
 
 export const usersref = collection(db, "users");
 
-export const postsref = collection(db, "posts");
+
+// ios : 721690591897-bir80v31lmj661st72ja3hvc879fvs44.apps.googleusercontent.com
+// android : 721690591897-a4ckg84fdsp0p7anoskd9u5djipo5b9e.apps.googleusercontent.com
