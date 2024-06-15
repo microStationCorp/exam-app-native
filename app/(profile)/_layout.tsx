@@ -3,11 +3,17 @@ import { Drawer } from "expo-router/drawer";
 import { AntDesign } from "@expo/vector-icons";
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 import CustomDrawerContent from "@/components/customDrawerContent";
+import UserButton from "@/components/userButton";
 
 export default function ProfileLayout() {
   return (
     <GestureHandlerRootView>
-      <Drawer drawerContent={CustomDrawerContent}>
+      <Drawer
+        drawerContent={CustomDrawerContent}
+        screenOptions={{
+          headerRight: () => <UserButton />,
+        }}
+      >
         <Drawer.Screen
           name="index"
           options={{

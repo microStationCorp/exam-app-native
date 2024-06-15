@@ -1,4 +1,4 @@
-import { Alert, Image, Text, TouchableOpacity, View } from "react-native";
+import { Image, Text, View } from "react-native";
 import React from "react";
 import {
   DrawerContentScrollView,
@@ -9,6 +9,7 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
+import { SignOut } from "./signOutComp";
 
 const CustomDrawerContent = (props: any) => {
   return (
@@ -32,12 +33,10 @@ const CustomDrawerContent = (props: any) => {
         <DrawerItemList {...props} />
       </DrawerContentScrollView>
       <View className="items-center mb-2">
-        {/* logout button clerk */}
+        <SignOut />
       </View>
     </SafeAreaView>
   );
 };
 
 export default CustomDrawerContent;
-
-
